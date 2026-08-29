@@ -960,6 +960,30 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
             font-weight: 600;
         }
         
+        .table-header-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+        
+        .btn-back-home {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.25);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-back-home:hover {
+            background: rgba(255,255,255,0.4);
+            color: white;
+        }
+        
         .table-responsive {
             max-height: 600px;
             overflow-y: auto;
@@ -1041,13 +1065,16 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
         }
         
         .percentile-badge {
-            display: inline-block;
-            padding: 6px 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 65px;
+            padding: 6px 10px;
             border-radius: 20px;
             background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
             color: white;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         
         .traffic-bar {
@@ -1175,39 +1202,85 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
             color: white;
         }
         
-        /* 固定返回按钮 - 隐藏 */
-        .btn-back-fixed {
-            display: none;
-        }
-        
         /* 分页控件 */
         .pagination-bar {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px 15px;
+            padding: 10px 15px;
             background: #f8f9fa;
             border-bottom: 1px solid #dee2e6;
+            gap: 6px;
             flex-wrap: wrap;
-            gap: 10px;
         }
         
-        .page-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .pagination-bar .btn {
+            min-width: 60px;
+            height: 38px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .page-size-input {
+            width: 55px;
+            height: 38px;
+            text-align: center;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 0;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.2s;
+            -moz-appearance: textfield;
+        }
+        
+        .page-size-input::-webkit-outer-spin-button,
+        .page-size-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        .page-size-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(47, 84, 150, 0.15);
         }
         
         .page-num {
-            font-weight: 500;
+            height: 38px;
+            line-height: 38px;
+            font-weight: 600;
             color: #333;
-            min-width: 120px;
+            min-width: 140px;
             text-align: center;
+            background: white;
+            padding: 0 14px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            font-size: 0.9rem;
         }
         
-        .page-info, .page-jump {
-            display: flex;
+        .btn-back-page {
+            display: inline-flex;
             align-items: center;
+            justify-content: center;
+            height: 38px;
+            padding: 0 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(238, 90, 36, 0.3);
+        }
+        
+        .btn-back-page:hover {
+            background: linear-gradient(135deg, #ee5a24 0%, #d63031 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(238, 90, 36, 0.4);
+        }
             gap: 8px;
             font-size: 0.9rem;
             color: #666;
@@ -1253,13 +1326,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
     </style>
 </head>
 <body>
-    <!-- 固定返回按钮 -->
-    <a href="/" class="btn-back-fixed">
-        <i class="bi bi-arrow-left"></i>
-        <span class="btn-back-text">返回主页</span>
-    </a>
-    
-    <div class="main-container" style="padding-top: 50px;">
+    <div class="main-container">
         <div class="card">
             <div class="card-header text-center">
                 <h1><img src="/static/logo.svg" alt="Cacti" style="height:36px;vertical-align:middle;margin-right:10px;">Cacti®点位数据分析系统</h1>
@@ -1313,33 +1380,28 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
                 <!-- 数据表格 -->
                 <div class="table-container">
                     <div class="table-header">
-                        <h3><i class="bi bi-table me-2"></i>流量数据明细</h3>
-                        <span class="badge bg-light text-dark">共{{.TotalSamples}}条记录</span>
+                        <div style="display:flex;align-items:center;gap:15px;">
+                            <h3><i class="bi bi-table me-2"></i>流量数据明细</h3>
+                            <span style="background:rgba(255,255,255,0.2);color:white;padding:6px 16px;border-radius:8px;font-weight:600;font-size:1rem;">共{{.TotalSamples}}条记录</span>
+                        </div>
+                        <a href="/" class="btn-back-page"><i class="bi bi-house me-1"></i>返回主页</a>
                     </div>
                     
                     <!-- 分页控件 -->
                     <div class="pagination-bar">
-                        <div class="page-info">
-                            <span>每页显示：</span>
-                            <select id="pageSize" onchange="changePageSize()">
-                                <option value="50">50条</option>
-                                <option value="100" selected>100条</option>
-                                <option value="200">200条</option>
-                                <option value="500">500条</option>
-                            </select>
-                        </div>
-                        <div class="page-nav">
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(1)" id="btnFirst">首页</button>
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(currentPage-1)" id="btnPrev">上一页</button>
-                            <span class="page-num" id="pageInfo">第1页/共1页</span>
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(currentPage+1)" id="btnNext">下一页</button>
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(totalPages)" id="btnLast">末页</button>
-                        </div>
-                        <div class="page-jump">
-                            <span>跳转到：</span>
-                            <input type="number" id="jumpPage" min="1" style="width:60px;" onkeydown="if(event.key==='Enter')jumpToPage()">
-                            <button class="btn btn-sm btn-primary" onclick="jumpToPage()">GO</button>
-                        </div>
+                        <span style="font-size:0.9rem;">每页</span>
+                        <input type="number" id="pageSize" value="100" min="10" max="1000" class="page-size-input" onchange="changePageSize()">
+                        <span style="font-size:0.9rem;">条</span>
+                        <button class="btn btn-outline-primary" onclick="goToPage(1)" id="btnFirst">首页</button>
+                        <button class="btn btn-outline-primary" onclick="goToPage(currentPage-1)" id="btnPrev">上一页</button>
+                        <span class="page-num" id="pageInfo">第1页/共1页</span>
+                        <button class="btn btn-outline-primary" onclick="goToPage(currentPage+1)" id="btnNext">下一页</button>
+                        <button class="btn btn-outline-primary" onclick="goToPage(totalPages)" id="btnLast">末页</button>
+                        <span style="color:#ccc;font-size:0.9rem;">|</span>
+                        <span style="font-size:0.9rem;">跳转</span>
+                        <input type="number" id="jumpPage" min="1" class="page-size-input" onkeydown="if(event.key==='Enter')jumpToPage()">
+                        <span style="font-size:0.9rem;">页</span>
+                        <button class="btn btn-primary" onclick="jumpToPage()">GO</button>
                     </div>
                     
                     <div class="table-responsive">
@@ -1355,17 +1417,6 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
                             <tbody id="tableBody">
                             </tbody>
                         </table>
-                    </div>
-                    
-                    <!-- 底部分页 -->
-                    <div class="pagination-bar">
-                        <div class="page-nav">
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(1)" id="btnFirst2">首页</button>
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(currentPage-1)" id="btnPrev2">上一页</button>
-                            <span class="page-num" id="pageInfo2">第1页/共1页</span>
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(currentPage+1)" id="btnNext2">下一页</button>
-                            <button class="btn btn-sm btn-outline-primary" onclick="goToPage(totalPages)" id="btnLast2">末页</button>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1469,17 +1520,12 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
             
             // 更新分页信息
             document.getElementById('pageInfo').textContent = '第' + currentPage + '页/共' + totalPages + '页';
-            document.getElementById('pageInfo2').textContent = '第' + currentPage + '页/共' + totalPages + '页';
             
             // 更新按钮状态
             document.getElementById('btnFirst').disabled = currentPage === 1;
             document.getElementById('btnPrev').disabled = currentPage === 1;
             document.getElementById('btnNext').disabled = currentPage === totalPages;
             document.getElementById('btnLast').disabled = currentPage === totalPages;
-            document.getElementById('btnFirst2').disabled = currentPage === 1;
-            document.getElementById('btnPrev2').disabled = currentPage === 1;
-            document.getElementById('btnNext2').disabled = currentPage === totalPages;
-            document.getElementById('btnLast2').disabled = currentPage === totalPages;
             
             // 滚动到锚点
             const hash = window.location.hash;
