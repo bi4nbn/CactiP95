@@ -199,8 +199,8 @@ func calculateP95(data []TrafficData, startDate, endDate string) P95Result {
 
 	totalSamples := len(data)
 	
-	// 当前95th（基于实际数据）
-	top5Percent := int(float64(totalSamples) * 0.05)
+	// 当前95th（基于实际数据）- 匹配Cacti算法：ceil(n*0.05) + 2
+	top5Percent := int(math.Ceil(float64(totalSamples) * 0.05)) + 1
 	currentP95Rank := top5Percent + 1
 	currentP95 := data[currentP95Rank-1].Total
 
@@ -209,14 +209,14 @@ func calculateP95(data []TrafficData, startDate, endDate string) P95Result {
 	monthDays := getMonthDays(startDate)
 	samplesPerDay := 288
 	totalSamplesTheory := monthDays * samplesPerDay
-	monthlyP95RankTheory := int(float64(totalSamplesTheory) * 0.05) + 1
+	monthlyP95RankTheory := int(math.Ceil(float64(totalSamplesTheory) * 0.05)) + 2
 	
 	// 如果实际数据足够，用理论位置；否则用实际位置
 	var monthlyP95Rank int
 	if totalSamples >= monthlyP95RankTheory {
 		monthlyP95Rank = monthlyP95RankTheory
 	} else {
-		monthlyP95Rank = int(float64(totalSamples) * 0.05) + 1
+		monthlyP95Rank = int(math.Ceil(float64(totalSamples) * 0.05)) + 2
 	}
 	
 	monthlyP95 := data[monthlyP95Rank-1].Total
