@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/fs"
 	"log"
-	"math"
 	"net/http"
 	"os"
 	"sort"
@@ -118,17 +117,16 @@ func readCSV(filepath string) ([]TrafficData, string, string, error) {
 		fields := parseCSVLine(line)
 		
 		if len(fields) > total2Index && strings.HasPrefix(fields[0], "2026") {
-			total1, err1 := strconv.ParseFloat(fields[total1Index], 64)
+			total1, _ := strconv.ParseFloat(fields[total1Index], 64)
 			total2, err2 := strconv.ParseFloat(fields[total2Index], 64)
 			
-			if err1 == nil && err2 == nil && total1 > 0 && total2 > 0 {
-				// 取两组数据的较大值
-				maxValue := math.Max(total1, total2)
+			if err2 == nil && total2 > 0 {
+				// 使用第二个合计列（traffic_out）作为计算依据，匹配Cacti算法
 				data = append(data, TrafficData{
 					Date:   fields[0],
 					Total1: total1,
 					Total2: total2,
-					Total:  maxValue,
+					Total:  total2,
 				})
 			}
 		}
@@ -199,8 +197,8 @@ func calculateP95(data []TrafficData, startDate, endDate string) P95Result {
 
 	totalSamples := len(data)
 	
-	// 当前95th（基于实际数据）- 匹配Cacti算法：ceil(n*0.05) + 2
-	top5Percent := int(math.Ceil(float64(totalSamples) * 0.05)) + 1
+	// 当前95th（基于实际数据）- 匹配Cacti算法：int(n*0.05) + 2
+	top5Percent := int(float64(totalSamples) * 0.05) + 1
 	currentP95Rank := top5Percent + 1
 	currentP95 := data[currentP95Rank-1].Total
 
@@ -209,14 +207,14 @@ func calculateP95(data []TrafficData, startDate, endDate string) P95Result {
 	monthDays := getMonthDays(startDate)
 	samplesPerDay := 288
 	totalSamplesTheory := monthDays * samplesPerDay
-	monthlyP95RankTheory := int(math.Ceil(float64(totalSamplesTheory) * 0.05)) + 2
+	monthlyP95RankTheory := int(float64(totalSamplesTheory) * 0.05) + 2
 	
 	// 如果实际数据足够，用理论位置；否则用实际位置
 	var monthlyP95Rank int
 	if totalSamples >= monthlyP95RankTheory {
 		monthlyP95Rank = monthlyP95RankTheory
 	} else {
-		monthlyP95Rank = int(math.Ceil(float64(totalSamples) * 0.05)) + 2
+		monthlyP95Rank = int(float64(totalSamples) * 0.05) + 2
 	}
 	
 	monthlyP95 := data[monthlyP95Rank-1].Total
