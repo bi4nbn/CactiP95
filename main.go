@@ -1,9 +1,11 @@
 package main
 
 import (
+	"embed"
 	"fmt"
 	"html/template"
 	"io"
+	"io/fs"
 	"log"
 	"math"
 	"net/http"
@@ -13,6 +15,9 @@ import (
 	"strings"
 	"time"
 )
+
+//go:embed static/*
+var staticFiles embed.FS
 
 // 流量数据结构
 type TrafficData struct {
@@ -1532,8 +1537,9 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	// 静态文件
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	// 静态文件（从嵌入的二进制中读取）
+	staticFS, _ := fs.Sub(staticFiles, "static")
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.FS(staticFS))))
 
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/upload", uploadHandler)
