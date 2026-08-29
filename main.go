@@ -242,7 +242,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cacti®点位数据分析系统</title>
-    <link rel="icon" href="https://www.cacti.net/images/logo.svg" type="image/svg+xml">
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -600,7 +600,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
     <div class="main-container">
         <div class="card">
             <div class="card-header text-center">
-                <h1><img src="https://www.cacti.net/images/logo.svg" alt="Cacti" style="height:36px;vertical-align:middle;margin-right:10px;">Cacti®点位数据分析系统</h1>
+                <h1><img src="/static/logo.svg" alt="Cacti" style="height:36px;vertical-align:middle;margin-right:10px;">Cacti®点位数据分析系统</h1>
             </div>
             <div class="card-body">
                 <form action="/upload" method="post" enctype="multipart/form-data" id="uploadForm">
@@ -773,7 +773,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cacti®点位数据分析系统</title>
-    <link rel="icon" href="https://www.cacti.net/images/logo.svg" type="image/svg+xml">
+    <link rel="icon" href="/static/logo.svg" type="image/svg+xml">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -1257,7 +1257,7 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
     <div class="main-container" style="padding-top: 50px;">
         <div class="card">
             <div class="card-header text-center">
-                <h1><img src="https://www.cacti.net/images/logo.svg" alt="Cacti" style="height:36px;vertical-align:middle;margin-right:10px;">Cacti®点位数据分析系统</h1>
+                <h1><img src="/static/logo.svg" alt="Cacti" style="height:36px;vertical-align:middle;margin-right:10px;">Cacti®点位数据分析系统</h1>
             </div>
             <div class="card-body">
                 <!-- P95指标卡片 -->
@@ -1532,6 +1532,9 @@ func uploadHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	// 静态文件
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
 	http.HandleFunc("/", indexHandler)
 	http.HandleFunc("/upload", uploadHandler)
 
